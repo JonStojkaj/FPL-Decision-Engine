@@ -1,2 +1,2 @@
 pytest
-highspy
+highspy==1.15.1
