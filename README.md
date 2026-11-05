@@ -80,7 +80,7 @@ Create an isolated environment and install the runtime dependencies:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install numpy pandas requests pulp streamlit
+python -m pip install -r requirements.txt
 ```
 
 Run the command-line pipeline:
@@ -107,6 +107,17 @@ The pipeline requires network access to the official FPL API and writes refreshe
 6. `multi_week_optimizer_mpc.py` validates the inputs and solves the rolling four-gameweek plan.
 
 The committed files in `data/` are inspectable snapshots, not a substitute for refreshing the official API before making a current decision.
+
+## Tests
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -q tests
+```
+
+The tests solve the multi-week model on a small synthetic player pool and check that every planned week respects the game rules (15 players with 2/5/5/3 per position, at most three per club, budget, a valid starting eleven), that every transfer is paid for with a free transfer or a hit, and that the model buys a clearly better player when it can. One test guards against an earlier objective bug: when cash in the bank was rewarded too strongly, the model sold good players for cheaper ones of equal value; with nothing better available it must now keep the squad.
+
+The tests use the HiGHS solver when it is installed, because the CBC binary bundled with PuLP does not run on Apple Silicon without Rosetta.
 
 ## Engineering Notes
 
